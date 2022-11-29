@@ -167,6 +167,6 @@ Those familiar with software development are likely already in the habit of writ
 
 Unit testing is language-specific, you may use any testing framework of your choice.
 
-## Documentation && Reference
+## Documentation
 
 The most comprehensive documentation for Turbine and how to work with Turbine apps is on the Meroxa site: [https://docs.meroxa.com/](https://docs.meroxa.com)

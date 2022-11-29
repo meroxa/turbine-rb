@@ -19,11 +19,14 @@ The benefits of using Turbine include:
     * [Javascript](https://github.com/meroxa/turbine-js)
     * [Python](https://github.com/meroxa/turbine-py)
     * [Ruby](https://github.com/meroxa/turbine-rb) (Limited Beta)
+-----------
     
   
-:::info **BETA FEATURE**
-Turbine Ruby is currently in beta and has limited functionality. If you wish to participate, sign up [here](https://share.hsforms.com/1s-FMleBKRBWucZB0hkjHAAc2sme) and a member of our team will follow up to discuss the steps to get the feature enabled. With this version of Turbine Ruby, you will be able run and deploy a Turbine Ruby application.
-:::
+> **BETA FEATURE**
+>
+>Turbine Ruby is currently in beta and has limited functionality. If you wish to participate, sign up [here](https://share.hsforms.com/1s-FMleBKRBWucZB0hkjHAAc2sme) and a member of our team will follow up to discuss the steps to get the feature enabled. With this version of Turbine Ruby, you will be able run and deploy a Turbine Ruby application.
+
+-----------
 
 ## Requirements 
 
@@ -62,7 +65,7 @@ ruby-simple
 
 This will be a full-fledged Turbine app that can run. You can even run the tests using the command `meroxa apps run` in the root of the app directory. It provides just enough to show you what you need to get started.
 
-### `**Gemfile**`
+### **`Gemfile`**
 
 This is a file that is created to describe the gem dependencies required to run a Ruby program.
 

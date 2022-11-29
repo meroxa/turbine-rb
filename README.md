@@ -92,8 +92,8 @@ This file contains all of the options for configuring a Turbine app.
 This configuration file is where you begin your Turbine journey. Any time a Turbine app runs, this is the entry point for the entire application. When the project is created, the file will look like this:
 
 ```ruby
-# frozen_string_literal: true
-
+require 'rubygems'
+require 'bundler/setup'
 require 'turbine_rb'
 
 class MyApp
@@ -104,8 +104,7 @@ class MyApp
     # records = database.records(collection: 'events')
     # database.write(records: records, collection: 'events_copy')
 
-    # procedural API
-    records = database.records(collection: 'events')
+    records = database.records(collection: 'events',configs:{"incrementing.column.name" => "id"})
 
     # This register the secret to be available in the turbine application
     app.register_secrets("MY_ENV_TEST") 
@@ -113,17 +112,12 @@ class MyApp
     # you can also register several secrets at once
     # app.register_secrets(["MY_ENV_TEST", "MY_OTHER_ENV_TEST"])
 
-    processed_records = app.process(records: records, process: Passthrough.new)  # Passthrough just has to match the signature
+    processed_records = app.process(records: records, process: Passthrough.new) # Passthrough just has to match the signature
     database.write(records: processed_records, collection: "events_copy")
-
-    # chaining API
-    # database.records(collection: "events").
-    #   process_with(process: Passthrough.new).
-    #   write_to(resource: database, collection: "events_copy")
   end
 end
 
-class Passthrough < TurbineRb::Process # might be useful to signal that this is a special Turbine call
+class Passthrough < TurbineRb::Process 
   def call(records:)
     puts "got records: #{records}"
     # records.map { |r| r.value = 'hi there' }

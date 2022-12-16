@@ -22,9 +22,9 @@ The benefits of using Turbine include:
 -----------
     
   
-> **BETA FEATURE**
+> **Developer Preview**
 >
->Turbine Ruby is currently in beta and has limited functionality. If you wish to participate, sign up [here](https://share.hsforms.com/1s-FMleBKRBWucZB0hkjHAAc2sme) and a member of our team will follow up to discuss the steps to get the feature enabled. With this version of Turbine Ruby, you will be able run and deploy a Turbine Ruby application.
+>Turbine Ruby is currently in Developer Preview. If you wish to participate, sign up [here](https://share.hsforms.com/1s-FMleBKRBWucZB0hkjHAAc2sme) and a member of our team will follow up to discuss the steps to get the feature enabled. With this version of Turbine Ruby, you will be able run and deploy a Turbine Ruby application.
 
 -----------
 
@@ -35,35 +35,30 @@ The benefits of using Turbine include:
     - [RVM](https://rvm.io/)
     - [asdf](https://github.com/asdf-vm/asdf-ruby)
 - [Latest Ruby version](https://www.ruby-lang.org/en/downloads/). If you have a Ruby version management tool installed, you can install ruby through your version management tool and specify which version you would like installed for your development use case.
-- Clone the following [repository](https://github.com/meroxa/turbine-examples) to obtain an example application you can copy:
-    
-    ```bash
-    $ git clone https://github.com/meroxa/turbine-examples.git
-    ```
-    
-    - [https://github.com/meroxa/turbine-examples]
 - You’ll also need to [download the Meroxa CLI](https://github.com/meroxa/cli#installation-guide).
 
 ## Getting Started
 
-In this current version of Turbine Ruby, the `init` command is not yet available. The `init` command will automatically scaffold a codebase in an empty Git repository. Without the `init` command, you will first need to initialize an empty Git repository because the application framework uses Git to manage deployments and releases. You must track your codebase and commit before deploying.
+To get started, [download the Meroxa CLI](https://github.com/meroxa/cli#installation-guide). Once downloaded and installed, go to your terminal and initialize a new project:
 
-Select or create a directory you will be developing your Turbine Ruby application. In that directory, you will initialize an empty Git repository using the `git init` command. Executing this command will create a new `.git` subdirectory in your current working directory. After initializing the Git Repository, you can now start developing your Turbine Ruby application.
+```ruby
+$ meroxa apps init my-ruby-app-name --lang ruby
+```
 
-## Development
-
-In the same directory that you have initialized a Git repository, copy `turbine-examples/ruby/simple/` files from the cloned turbine-examples repository. Once you enter the `ruby-simple` directory, the contents will look like this:
+The CLI will create a new folder called my-ruby-app located in the directory where the command was issued. If you want to initialize the app somewhere else, you can append the `--path` flag to the command (`meroxa apps init my-ruby-app-name --lang ruby --path ~/anotherdir`). Once you enter the my-ruby-app-name directory, the contents will look like this:
 
 ```bash
-ruby-simple
+my-ruby-app-name
 ├── Gemfile
 ├── app.json
 ├── app.rb
 └── fixtures
-    └── demo.json
+   └── demo.json
 ```
+   
+This will be a full-fledged Turbine app that can run. You can even run the tests using the command meroxa apps run in the root of the app directory. It provides just enough to show you what you need to get started.
 
-This will be a full-fledged Turbine app that can run. You can even run the tests using the command `meroxa apps run` in the root of the app directory. It provides just enough to show you what you need to get started.
+Install the necessary dependencies with: bundle install.
 
 ### **`Gemfile`**
 
@@ -92,42 +87,74 @@ This file contains all of the options for configuring a Turbine app.
 This configuration file is where you begin your Turbine journey. Any time a Turbine app runs, this is the entry point for the entire application. When the project is created, the file will look like this:
 
 ```ruby
-require 'rubygems'
-require 'bundler/setup'
-require 'turbine_rb'
+# frozen_string_literal: true
+
+require "rubygems"
+require "bundler/setup"
+require "turbine_rb"
 
 class MyApp
   def call(app)
-    database = app.resource(name: 'demopg')
+    # To configure resources for your production datastores
+    # on Meroxa, use the Dashboard, CLI, or Terraform Provider
+    # For more details refer to: http://docs.meroxa.com/
+    #
+    # Identify the upstream datastore with the `resource` function
+    # Replace `demopg` with the resource name configured on Meroxa
+    database = app.resource(name: "demopg")
 
-    # ELT pipeline example
-    # records = database.records(collection: 'events')
-    # database.write(records: records, collection: 'events_copy')
+    # Specify which upstream records to pull
+    # with the `records` function
+    # Replace `collection_name` with a table, collection,
+    # or bucket name in your data store.
+    # If a configuration is needed for your source,
+    # you can pass it as a second argument to the `records` function. For example:
+    # database.records(collection: "collection_name", configs: {"incrementing.column.name" => "id"})
+    records = database.records(collection: "collection_name")
 
-    records = database.records(collection: 'events',configs:{"incrementing.column.name" => "id"})
+    # Register secrets to be available in the function:
+    # app.register_secrets("MY_ENV_TEST")
 
-    # This register the secret to be available in the turbine application
-    app.register_secrets("MY_ENV_TEST") 
-
-    # you can also register several secrets at once
+    # Register several secrets at once:
     # app.register_secrets(["MY_ENV_TEST", "MY_OTHER_ENV_TEST"])
 
-    processed_records = app.process(records: records, process: Passthrough.new) # Passthrough just has to match the signature
-    database.write(records: processed_records, collection: "events_copy")
+    # Specify the code to execute against `records` with the `process` function.
+    # Replace `Passthrough` with your desired function.
+    # Ensure desired function matches `Passthrough`'s' function signature.
+    processed_records = app.process(records: records, process: Passthrough.new)
+
+    # Specify where to write records using the `write` function.
+    # Replace `collection_archive` with whatever data organisation method
+    # is relevant to the datastore (e.g., table, bucket, collection, etc.)
+    # If additional connector configs are needed, provided another argument. For example:
+    # database.write(
+    #   records: processed_records,
+    #   collection: "collection_archive",
+    #   configs: {"behavior.on.null.values": "ignore"})
+    database.write(records: processed_records, collection: "collection_archive")
   end
 end
 
-class Passthrough < TurbineRb::Process 
+class Passthrough < TurbineRb::Process
   def call(records:)
     puts "got records: #{records}"
-    # records.map { |r| r.value = 'hi there' }
+    # To get the value of unformatted records, use record .value getter method
+    # records.map { |r| puts r.value }
+    #
+    # To transform unformatted records, use record .value setter method
+    # records.map { |r| r.value = "newdata" }
+    #
+    # To get the value of json formatted records, use record .get method
+    # records.map { |r| puts r.get("message") }
+    #
+    # To transform json formatted records, use record .set methods
+    # records.map { |r| r.set('message', 'goodbye') }
     records
   end
 end
 
 TurbineRb.register(MyApp.new)
 ```
-
 
 
 ### Fixtures

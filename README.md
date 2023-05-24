@@ -18,7 +18,7 @@ The benefits of using Turbine include:
     * [Go](https://github.com/meroxa/turbine-go)
     * [Javascript](https://github.com/meroxa/turbine-js)
     * [Python](https://github.com/meroxa/turbine-py)
-    * [Ruby](https://github.com/meroxa/turbine-rb) (Developer Preview)
+    * [Ruby](https://github.com/meroxa/turbine-rb) 
 -----------
 
 ## Requirements 

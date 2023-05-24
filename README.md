@@ -20,13 +20,6 @@ The benefits of using Turbine include:
     * [Python](https://github.com/meroxa/turbine-py)
     * [Ruby](https://github.com/meroxa/turbine-rb) (Developer Preview)
 -----------
-    
-  
-> **Developer Preview**
->
->Turbine Ruby is currently in Developer Preview. If you wish to participate, sign up [here](https://share.hsforms.com/1s-FMleBKRBWucZB0hkjHAAc2sme) and a member of our team will follow up to discuss the steps to get the feature enabled. With this version of Turbine Ruby, you will be able run and deploy a Turbine Ruby application.
-
------------
 
 ## Requirements 
 
